@@ -1,0 +1,24 @@
+---
+# Basic rulebook with job template, 
+# to be used with https://github.com/Alex-Izquierdo/eda-awx-project-sample
+- name: Basic short
+  hosts: all
+  sources:
+    - ansible.eda.webhook:
+        port: 5000
+  rules:
+    - name: Run job template when the event is aaa
+      condition: event.payload.letters== "aaa"
+      actions:
+        - run_job_template:
+            organization: Default
+            name: run_basic
+            job_args:
+              limit: "{{ event.payload.meta.hosts }}"
+              extra_vars:
+                pause_time_min: 5
+
+        - debug:
+            msg: "Basic short rulebook, event {{ event }}"
+
+  execution_strategy: "parallel"
